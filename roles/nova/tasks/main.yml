@@ -1,0 +1,40 @@
+---
+- name: OS | create openstack vm
+  os_server:
+    state: present
+    auth: 
+      auth_url: "{{ os_auth_url }}"
+      username: "{{ os_user }}"
+      password: "{{ os_user_passwd }}"
+      project_name: "{{ os_project_name }}"
+    name: '{{ item }}'
+    image: "{{ os_image }}"
+    key_name: "{{ os_ssh_key }}"
+    flavor: "{{ os_flavor }}"
+    auto_ip: no
+    boot_from_volume: True
+    terminate_volume: True
+    nics:
+      - net-id: "{{ os_net_id }}"
+    security_groups: "{{ os_security_group }}"
+    delete_fip: yes
+    timeout: 180
+    wait: yes
+    volume_size: 10
+  register: vm
+  with_sequence: start=1 end={{ instances_info.cnt }} format={{ host_prefix }}-{{ instances_info.name }}-%02x
+
+- name: OS | add host
+  add_host:
+    hostname: "{{ item.openstack.private_v4 }}"
+    groupname: launched
+  with_items: "{{ vm.results }}"
+
+- name: OS | wait for os instance
+  wait_for:
+    host: "{{ item.openstack.private_v4 }}"
+    port: 22
+    delay: 20
+    timeout: 400
+    state: started
+  with_items: "{{ vm.results }}"

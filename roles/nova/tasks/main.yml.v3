@@ -1,0 +1,68 @@
+---
+- name: OS | Set cridentials
+  set_fact:
+    os_auth:
+      auth_url: http://192.168.6.1:5000/v3/
+      username: "{{ os_user }}"
+      password: "{{ os_user_passwd }}"
+      project_name: "{{ os_project_name }}"
+      project_domain_name: admin
+      user_domain_name: admin
+      domain_name: admin
+      identity_api_version: 3
+      auth_type: password
+      region_name: RegionOne
+      endpoint_type: internal
+      #auth_version: 2
+      #compute_api_version: 2
+
+- name: debug
+  debug:
+    msg: "{{ os_auth }}"
+
+- name: OS | create openstack vm
+  os_server:
+    #state: absent
+    state: present
+    auth: "{{ os_auth }}"
+    name: 'k8s-{{ item.name }}-{{ item.post }}'
+    image: "{{ os_image }}"
+    key_name: "{{ os_ssh_key }}"
+    flavor: "{{ os_flavor }}"
+    auto_ip: no
+    boot_from_volume: True
+    terminate_volume: True
+    nics:
+      - net-id: "{{ os_net_id }}"
+    security_groups: default
+    delete_fip: yes
+    timeout: 180
+    wait: yes
+    volume_size: 10
+    auth_type: password
+    region_name: RegionOne
+    endpoint_type: internal
+  register: vms
+  with_items: "{{ instance_info }}"
+
+#- name: OS | instance info
+#  debug:
+#    msg: "{{ item['openstack']['human_id'] }}"
+#  with_items: "{{ vms.results }}"
+#  tags: debug
+
+- name: OS | add host
+  add_host:
+    hostname: "{{ item.openstack.private_v4 }}"
+    groupname: launched
+  with_items: "{{ vms.results }}"
+#  when: vms.results
+
+- name: OS | wait for os instance
+  wait_for:
+    host: "{{ item.openstack.private_v4 }}"
+    port: 22
+    delay: 10
+    timeout: 400
+    state: started
+  with_items: "{{ vms.results }}"

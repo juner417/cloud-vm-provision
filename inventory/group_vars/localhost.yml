@@ -1,0 +1,38 @@
+---
+# your cloud provider
+cloud_provider: os
+become_user: ubuntu
+
+# vm hosts prefix
+host_prefix: k8s
+instances_info:
+  name: node 
+  cnt: 3
+
+# openstack infos
+# Change upper case letters appropriately
+os_user: TEST
+os_user_passwd: 'YOURPASSWORD'
+os_project_name: 'YOURPROJECT'
+os_auth_url: http://TEST:5000/v2.0/
+os_ssh_key: TEST_KEYS
+os_flavor: 45a89266-1dfs-4ffb-802f-7e0951e72e1c
+os_net_id: 92239101-3ddf-4f34-8bd7-35f07caab4f2
+os_net_name: TESTPUBLIC
+os_image: 66af8856-7dd3-445e-92c3-32e74702a576
+os_security_group: default
+
+# aws infos
+# Change upper case letters appropriately
+aws_ssh_key: TESTKEY
+aws_access_key: TESTTEST
+aws_secret_key: TESTSCERET
+aws_security_group: launch-wizard-2
+aws_instance_type: t2.small
+aws_instance_images: AMI-11111
+aws_instance_region: ap-northeast-2
+aws_instance_zone: ap-northeast-2c
+aws_subnet_id: SUBNET-11111
+aws_instance_vol: /dev/sda1
+aws_vol_type: gp2
+aws_vol_size: 10

@@ -1,0 +1,33 @@
+---
+- hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: debug cloud provider
+      debug:
+        msg: "cloud {{ cloud_provider }}"
+
+    - name: checking providers
+      pause:
+        prompt: "Your choosing providers {{ cloud_provider }}, is this right?(default:yes)"
+        default: "yes"
+      register: confirmation
+
+  post_tasks:
+    - name: check confirmation
+      fail:
+        msg: "provider mismatch"
+      when: confirmation != "no"
+
+- hosts: localhost
+  gather_facts: false
+  roles:
+    - { role: ec2, when: cloud_provider == 'aws' }
+    - { role: nova, when: cloud_provider == 'os' }
+  tags: vm
+
+- hosts: launched
+  gather_facts: false
+  roles:
+    - { role: bootstrap-os }
+    - { role: docker, when: preinstall_docker == True }
+  tags: bootstrap

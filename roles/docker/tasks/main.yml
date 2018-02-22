@@ -1,0 +1,58 @@
+---
+- name: DOCKER | ensure docker repository public key is installed
+  action: "{{ docker_repo_key_info.pkg_key }}"
+  args:
+    id: "{{item}}"
+    keyserver: "{{docker_repo_key_info.keyserver}}"
+    state: present
+  register: keyserver_task_result
+  until: keyserver_task_result|succeeded
+  retries: 4
+  #delay: "{{ retry_stagger | random + 3 }}"
+  with_items: "{{ docker_repo_key_info.repo_keys }}"
+
+- name: DOCKER | ensure docker repository is enabled
+  action: "{{ docker_repo_info.pkg_repo }}"
+  args:
+    repo: "{{item}}"
+    state: present
+  with_items: "{{ docker_repo_info.repos }}"
+
+- name: ensure docker packages are installed
+  action: "{{ docker_package_info.pkg_mgr }}"
+  args:
+    pkg: "{{item.name}}"
+    force: "{{item.force|default(omit)}}"
+    state: present
+  register: docker_task_result
+  until: docker_task_result|succeeded
+  retries: 4
+  #delay: "{{ retry_stagger | random + 3 }}"
+  with_items: "{{ docker_package_info.pkgs }}"
+
+- name: Docker | reload docker
+  service:
+    name: docker
+    state: restarted
+
+- name: Docker | pause while Docker restarts
+  pause:
+    seconds: 10
+    prompt: "Waiting for docker restart"
+
+#- name: DOCKER | apt install docker 
+#  apt: 
+#    name: docker.io
+    #update_cache: yes
+
+- name: DOCKER | add ubuntu in docker group 
+  command: "sudo gpasswd -a ubuntu docker"
+  become: true
+  become_user: ubuntu
+
+- name: DOKCER | docker pull images
+  command: "/usr/bin/docker pull {{ item.name }}:{{ item.tag }}"
+  register: pull_task_result
+  until: pull_task_result|succeeded
+  retries: 4
+  with_items: "{{ images }}"

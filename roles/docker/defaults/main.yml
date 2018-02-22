@@ -1,0 +1,16 @@
+images:
+  - { name: busybox, tag: latest }
+  - { name: quay.io/coreos/hyperkube, tag: v1.6.4_coreos.0 }
+  - { name: gcr.io/google_containers/k8s-dns-sidecar-amd64, tag: 1.14.2 }
+  - { name: gcr.io/google_containers/k8s-dns-kube-dns-amd64, tag: 1.14.2 }
+  - { name: gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64, tag: 1.14.2 }
+  - { name: lachlanevenson/k8s-helm, tag: v2.2.2 }
+  - { name: gcr.io/kubernetes-helm/tiller, tag: v2.2.2 }
+  - { name: gcr.io/google_containers/cluster-proportional-autoscaler-amd64, tag: 1.1.1 }
+  - { name: quay.io/coreos/etcd, tag: v3.0.17 }
+  - { name: gcr.io/google_containers/fluentd-elasticsearch, tag: 1.22 }
+  - { name: gcr.io/google_containers/elasticsearch, tag: v2.4.1 }
+  - { name: gcr.io/google_containers/kibana, tag: v4.6.1 }
+  - { name: nginx, tag: 1.11.4-alpine }
+  - { name: quay.io/coreos/flannel, tag: v0.6.2 }
+  - { name: gcr.io/google_containers/pause-amd64, tag: 3.0 }

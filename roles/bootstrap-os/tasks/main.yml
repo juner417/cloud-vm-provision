@@ -1,0 +1,16 @@
+- name: Bootstrap | Check if bootstrap is needed
+  raw: which "{{ item }}"  
+  register: need_bootstrap
+  failed_when: false
+  with_items:
+    - python
+    - pip
+
+- name: Bootstrap | Install python 2.x and pip
+  raw:
+    sudo apt-get update && \
+    DEBIAN_FRONTEND=noninteractive sudo apt-get install -y python-minimal python-pip
+  when:
+    "{{ need_bootstrap.results | map(attribute='rc') | sort | last | bool }}"
+  become: true
+  become_user: "{{ become_user }}"
