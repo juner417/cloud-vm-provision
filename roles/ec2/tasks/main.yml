@@ -24,7 +24,7 @@
       Name: "{{ item }}"
       type: ansible_created
   register: ec2
-  with_sequence: start=1 end={{ instances_info.cnt }} format={{ host_prefix }}-{{ instances_info.name }}-%02x
+  with_sequence: start={{ instances_info.start }} end={{ instances_info.end }} format={{ host_prefix }}-{{ instances_info.name }}-%02x
 
 - name: EC2 | add host
   add_host:
@@ -39,4 +39,16 @@
     delay: 20
     timeout: 400
     state: started
+  with_items: "{{ ec2.results }}"
+
+- name: debug
+  debug:
+    var: "{{ ec2.results }}"
+
+- name: EC2 | change hostname
+  replace:
+    path: /etc/hostname
+    regexp: "^ip-{{ item.instances[0].private_ip }}$"
+    replace: "{{ item.instances[0].tags.Name }}"
+    backup: yes
   with_items: "{{ ec2.results }}"

@@ -1,3 +1,12 @@
+- name: Bootstrap | change hostname
+  replace:
+    path: /etc/hostname
+    regexp: '^ip-(\d{2,3}-){3}\d{2,3}$'
+    replace: "{{ item.instances[0].tags.Name }}"
+    backup: yes
+  with_items: "{{ ec2.results }}"
+  when: cloud_provider == 'aws'
+
 - name: Bootstrap | Check if bootstrap is needed
   raw: which "{{ item }}"  
   register: need_bootstrap

@@ -1,13 +1,14 @@
 ---
 # your cloud provider
-cloud_provider: os
+cloud_provider: aws
 become_user: ubuntu
 
 # vm hosts prefix
 host_prefix: k8s
 instances_info:
   name: node 
-  cnt: 3
+  start: 1
+  end: 2
 
 # openstack infos
 # Change upper case letters appropriately
