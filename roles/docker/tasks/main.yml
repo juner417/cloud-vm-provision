@@ -40,11 +40,6 @@
     seconds: 10
     prompt: "Waiting for docker restart"
 
-#- name: DOCKER | apt install docker 
-#  apt: 
-#    name: docker.io
-    #update_cache: yes
-
 - name: DOCKER | add ubuntu in docker group 
   command: "sudo gpasswd -a ubuntu docker"
   become: true
@@ -56,3 +51,4 @@
   until: pull_task_result|succeeded
   retries: 4
   with_items: "{{ images }}"
+  when: docker_image_pull 
