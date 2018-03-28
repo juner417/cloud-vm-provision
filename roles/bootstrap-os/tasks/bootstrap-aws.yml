@@ -1,15 +1,12 @@
-- name: Bootstrap | change hostname
+- name: Bootstrap | change hostname file
   replace:
     path: /etc/hostname
     regexp: '^ip-(\d{2,3}-){3}\d{2,3}$'
     replace: "{{ hostvars[inventory_hostname].tag }}"
     backup: yes
-  when: cloud_provider == 'aws'
 
-- name: Bootstrap | restart ec2
-  local_action:
-    module: ec2
-    instance_tags:
-      Name: "{{ hostvars[inventory_hostname].tag }}"
-    state: restarted
-  when: cloud_provider == 'aws'
+- name: Bootstrap | change hostname
+  command: 'hostnamectl set-hostname {{ hostvars[inventory_hostname].tag }}'
+    
+- name: Bootstrap | change hostname proc
+  command: 'echo {{ hostvars[inventory_hostname].tag }} > /proc/sys/kernel/hostname'
