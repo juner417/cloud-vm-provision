@@ -16,5 +16,5 @@
   become_user: "{{ become_user }}"
 
 - name: Bootstrap | include
-  include: bootstrap-aws.yml
+  include_tasks: bootstrap-aws.yml
   when: cloud_provider == 'aws'

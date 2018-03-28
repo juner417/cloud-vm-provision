@@ -2,7 +2,7 @@
   replace:
     path: /etc/hostname
     regexp: '^ip-(\d{2,3}-){3}\d{2,3}$'
-    replace: "{{ inventory_hostname[tag] }}"
+    replace: "{{ hostvars[inventory_hostname].tag }}"
     backup: yes
   when: cloud_provider == 'aws'
 
@@ -10,6 +10,6 @@
   local_action:
     module: ec2
     instance_tags:
-      Name: "{{ inveontory_hostname[tag] }}"
+      Name: "{{ hostvars[inventory_hostname].tag }}"
     state: restarted
   when: cloud_provider == 'aws'

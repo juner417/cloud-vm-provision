@@ -16,7 +16,7 @@
     - name: check confirmation
       fail:
         msg: "provider mismatch"
-      when: confirmation != "no"
+      when: confirmation == "no"
 
 - hosts: localhost
   gather_facts: false
